@@ -27,9 +27,15 @@ go build -gcflags -m *.go
 
 ## Test
 
-~~~
-go test
-~~~
+[TESTING.md](docs/TESTING.md)
+
+## Code Coverage
+
+[COVERAGE.md](docs/COVERAGE.md)
+
+## Benchmarking
+
+[BENCHMARKING.MD](docs/BENCHMARKING.MD)
 
 ## Run
 

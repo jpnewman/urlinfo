@@ -34,11 +34,17 @@ func (f *ConsoleFormatter) PrintMessage(msg string) {
 	defer f.mu.Unlock()
 }
 
+// TODO: Check color output and locks.
 // printMessage Print Console Formatted Message
 func (f *ConsoleFormatter) printFormattedMessage(msg string, overline string, underline string, width int, c *color.Color) {
+	f.mu.Lock()
+	color.Output = f.Out
+
 	c.Println(strings.Repeat(overline, ConsoleWidth))
 	c.Println(msg)
 	c.Println(strings.Repeat(underline, ConsoleWidth))
+
+	defer f.mu.Unlock()
 }
 
 // PrintHeader Prints Console Header
