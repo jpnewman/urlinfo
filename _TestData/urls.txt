@@ -1,0 +1,35 @@
+# http://johnpaulnewman.com/
+
+http://google.com
+https://google.com
+google.com
+
+https://microsoft.com
+
+https://amazon.co.uk
+
+https://github.com/
+https://github.com/jpnewman
+
+http://example.com/
+example.com
+https://example.com/ # End of line comment
+https://example.com/ # End of line comment, with # in it.
+
+# Indented line
+  http://test.com
+
+# Bad URL protocal
+ htpp://google.com
+
+ # Indented Comment
+
+# Non-existent 
+https://non-existent-url.org.uk
+
+# Duplicate URLs
+https://google.com
+HTTPS://GOOGLE.COM
+
+# URL with protocal
+https://google.com:80
