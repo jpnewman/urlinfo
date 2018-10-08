@@ -10,31 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var consoleFormatter *ConsoleFormatter
-
-func setup() {
-	fmt.Println("Test Setup...")
-
-	var bb bytes.Buffer
-	writer := bufio.NewWriter(&bb)
-
-	consoleFormatter = &ConsoleFormatter{
-		Out: writer,
-	}
-}
-
-func teardown() {
-	fmt.Println("Test Teardown...")
-}
-
-func TestMain(m *testing.M) {
-	setup()
-	code := m.Run()
-	teardown()
-	os.Exit(code)
-}
-
-func TestSetOutput_stdout(t *testing.T) {
+func TestConsoleSetOutput_stdout(t *testing.T) {
 	var bw *bufio.Writer
 	assert.IsType(t, consoleFormatter.Out, bw)
 
@@ -46,7 +22,7 @@ func TestSetOutput_stdout(t *testing.T) {
 	consoleFormatter.SetOutput(writer)
 }
 
-func TestPrintMessage_EmptyString(t *testing.T) {
+func TestConsolePrintMessage_EmptyString(t *testing.T) {
 	s := ""
 	var bb bytes.Buffer
 	consoleFormatter.SetOutput(&bb)
@@ -55,7 +31,7 @@ func TestPrintMessage_EmptyString(t *testing.T) {
 	assert.Equal(t, "\n", bb.String())
 }
 
-func BenchmarkPrintMessage_EmptyString(b *testing.B) {
+func BenchmarkConsolePrintMessage_EmptyString(b *testing.B) {
 	b.ReportAllocs()
 
 	s := ""
@@ -67,7 +43,7 @@ func BenchmarkPrintMessage_EmptyString(b *testing.B) {
 	}
 }
 
-func TestPrintMessage_TextWithoutNewline(t *testing.T) {
+func TestConsolePrintMessage_TextWithoutNewline(t *testing.T) {
 	s := "TEST"
 	var bb bytes.Buffer
 	consoleFormatter.SetOutput(&bb)
@@ -76,7 +52,7 @@ func TestPrintMessage_TextWithoutNewline(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf("%s\n", s), bb.String())
 }
 
-func TestPrintMessage_TextWithNewline(t *testing.T) {
+func TestConsolePrintMessage_TextWithNewline(t *testing.T) {
 	s := "TEST\n"
 	var bb bytes.Buffer
 	consoleFormatter.SetOutput(&bb)
@@ -86,7 +62,7 @@ func TestPrintMessage_TextWithNewline(t *testing.T) {
 }
 
 // FIXME: Check or remove ANSI escape code and under-/over-line.
-// func TestPrintHeader_TextWithoutNewline(t *testing.T) {
+// func TestConsolePrintHeader_TextWithoutNewline(t *testing.T) {
 // 	s := "TEST"
 // 	var bb bytes.Buffer
 // 	consoleFormatter.SetOutput(&bb)
@@ -96,7 +72,7 @@ func TestPrintMessage_TextWithNewline(t *testing.T) {
 // 	assert.Equal(t, fmt.Sprintf("%s\n", s), bb.String())
 // }
 
-func BenchmarkPrintHeader_EmptyString(b *testing.B) {
+func BenchmarkConsolePrintHeader_EmptyString(b *testing.B) {
 	b.ReportAllocs()
 
 	s := ""

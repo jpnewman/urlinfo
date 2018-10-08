@@ -21,8 +21,17 @@ func (f *MarkdownFormatter) SetOutput(output io.Writer) {
 
 // PrintMessage Print Markdown Message
 func (f *MarkdownFormatter) PrintMessage(msg string) {
-	padMsg := fmt.Sprintf("%s  ", msg)
-	b := convertStringToBytes(padMsg)
+	s := msg
+
+	if len(s) > 0 {
+		if last := len(s) - 1; last >= 0 && s[last] == '\n' {
+			s = s[:last]
+		}
+
+		s = fmt.Sprintf("%s  ", s)
+	}
+
+	b := convertStringToBytes(s)
 	f.mu.Lock()
 	f.Out.Write(b)
 	defer f.mu.Unlock()
