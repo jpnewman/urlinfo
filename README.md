@@ -35,7 +35,7 @@ go build -gcflags -m *.go
 
 ## Benchmarking
 
-[BENCHMARKING.MD](docs/BENCHMARKING.MD)
+[BENCHMARKING.md](docs/BENCHMARKING.md)
 
 ## Run
 
