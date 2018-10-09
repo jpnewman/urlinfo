@@ -18,7 +18,7 @@ go tool pprof urlinfo ./_OUTPUT/cpu.prof
 > Memory
 
 ~~~
-go tool pprof urlinfo ./_OUTPUT/mem.prof
+go tool pprof urlinfo ./_OUTPUT/mem_Done.prof
 ~~~
 
 ## Convert
@@ -26,13 +26,13 @@ go tool pprof urlinfo ./_OUTPUT/mem.prof
 > CPU, PDF
 
 ~~~
-go tool pprof --pdf ./_OUTPUT/cpu.prof > cpu_prof.pdf
+go tool pprof --pdf ./_OUTPUT/cpu.prof > cpu.pdf
 ~~~
 
 > Memory, PDF
 
 ~~~
-go tool pprof --pdf ./_OUTPUT/mem.prof > mem_prof.pdf
+go tool pprof --pdf ./_OUTPUT/mem.prof > mem_Done.pdf
 ~~~
 
 ## References
