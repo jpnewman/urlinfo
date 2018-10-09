@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jpnewman/urlinfo/profiling"
+
 	"github.com/motemen/go-loghttp"
 	"github.com/sirupsen/logrus"
 
@@ -63,6 +65,24 @@ func createHTTPClient(args getHTTPArgs, timeout time.Duration) *http.Client {
 	return client
 }
 
+func httpRequest(args getHTTPArgs, client *http.Client) (*http.Response, error) {
+	defer profiling.Elapsed("HTTP Request Time")()
+
+	var resp *http.Response
+	var err error
+	if args.options.getHeadOny {
+		resp, err = client.Head(args.url)
+	} else {
+		resp, err = client.Get(args.url)
+	}
+
+	if err != nil {
+		logging.Logger.Error(err)
+	}
+
+	return resp, err
+}
+
 func getHTTPResponseBody(resp *http.Response) (string, error) {
 	if resp == nil {
 		return "", nil
@@ -94,19 +114,15 @@ func getHTTP(args getHTTPArgs) *httpResponse {
 		return httpResp
 	}
 
-	var resp *http.Response
-	var err error
-	if args.options.getHeadOny {
-		resp, err = client.Head(args.url)
-	} else {
-		resp, err = client.Get(args.url)
+	resp, err := httpRequest(args, client)
+	httpResp.errs = append(httpResp.errs, err)
+
+	if err == nil {
+		defer resp.Body.Close()
 	}
 
-	if err != nil {
-		logging.Logger.Error(err)
-		httpResp.errs = append(httpResp.errs, err)
-	} else {
-		defer resp.Body.Close()
+	if resp == nil {
+		return httpResp
 	}
 
 	httpResp.statusCode = resp.StatusCode
@@ -155,7 +171,7 @@ func processURLs(urls map[string][]lineDetails, args processURLsArgs) {
 	errorCount := 0
 	for j := 0; j < urlsCount; j++ {
 		ret := <-results
-		errorCount += printOutput(args, ret)
+		errorCount += printOutput(args, &ret)
 	}
 
 	Report.PrintHeaderf("Processed %d URLs with %d Errors", urlsCount, errorCount)

@@ -41,7 +41,7 @@ func PrintHTTPHeaders(resp *httpResponse) {
 	Report.PrintCode(buffer.String())
 }
 
-func printOutput(args processURLsArgs, ret httpResponse) int {
+func printOutput(args processURLsArgs, ret *httpResponse) int {
 	Report.PrintSubHeader(ret.url)
 
 	errorCount := 0
@@ -55,7 +55,7 @@ func printOutput(args processURLsArgs, ret httpResponse) int {
 	}
 
 	if logging.RootLogger.GetLevel() == logrus.DebugLevel {
-		PrintURLInfo(&ret)
+		PrintURLInfo(ret)
 	}
 
 	if args.getHeadOny {

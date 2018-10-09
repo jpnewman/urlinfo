@@ -13,7 +13,7 @@ import (
 var Report = report.New()
 
 func main() {
-	defer profiling.Elapsed(fmt.Sprintf("Program Done"))()
+	defer profiling.Elapsed("Program Done")()
 
 	logging.LogInit("urlinfo.log")
 	logging.Logger.Infof("Program Started: %s", os.Args)
