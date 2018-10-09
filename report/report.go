@@ -1,13 +1,10 @@
 package report
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
-	"sort"
 	"strings"
 )
 
@@ -129,33 +126,4 @@ func (r *Reporter) PrintCodef(format string, args ...interface{}) {
 // PrintList Print List
 func (r *Reporter) PrintList(list []string) {
 	r.Formatter.PrintList(list)
-}
-
-// PrintURLInfo Print URL Info
-func (r *Reporter) PrintURLInfo(resp *http.Response) {
-	if resp == nil {
-		return
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		r.PrintOKf("%s : %d", resp.Request.URL, resp.StatusCode)
-		r.PrintHTTPHeaders(resp)
-	}
-}
-
-// PrintHTTPHeaders Print HTTP Headers
-func (r *Reporter) PrintHTTPHeaders(resp *http.Response) {
-	var buffer bytes.Buffer
-
-	var keys []string
-	for k := range resp.Header {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	for _, k := range keys {
-		buffer.WriteString(fmt.Sprintf("%v: %v\n", k, resp.Header[k]))
-	}
-
-	r.PrintCode(buffer.String())
 }
