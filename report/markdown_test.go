@@ -68,7 +68,7 @@ func TestMarkdownPrintHeader_TextWithoutNewline(t *testing.T) {
 
 	markdownFormatter.PrintHeader(s)
 
-	assert.Equal(t, fmt.Sprintf("# %s  \n", s), bb.String())
+	assert.Equal(t, fmt.Sprintf("\n# %s  \n", s), bb.String())
 }
 
 func BenchmarkMarkdownPrintHeader_EmptyString(b *testing.B) {

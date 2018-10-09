@@ -12,6 +12,18 @@ type MarkdownFormatter struct {
 	mu  sync.Mutex
 }
 
+func addDoubleSpaces(s string) string {
+	if len(s) > 0 {
+		if last := len(s) - 1; last >= 0 && s[last] == '\n' {
+			s = s[:last]
+		}
+
+		return fmt.Sprintf("%s  ", s)
+	}
+
+	return s
+}
+
 // SetOutput Set Output Writer
 func (f *MarkdownFormatter) SetOutput(output io.Writer) {
 	f.mu.Lock()
@@ -21,16 +33,7 @@ func (f *MarkdownFormatter) SetOutput(output io.Writer) {
 
 // PrintMessage Print Markdown Message
 func (f *MarkdownFormatter) PrintMessage(msg string) {
-	s := msg
-
-	if len(s) > 0 {
-		if last := len(s) - 1; last >= 0 && s[last] == '\n' {
-			s = s[:last]
-		}
-
-		s = fmt.Sprintf("%s  ", s)
-	}
-
+	s := addDoubleSpaces(msg)
 	b := convertStringToBytes(s)
 	f.mu.Lock()
 	f.Out.Write(b)
@@ -39,12 +42,12 @@ func (f *MarkdownFormatter) PrintMessage(msg string) {
 
 // PrintHeader Print Markdown Header Message
 func (f *MarkdownFormatter) PrintHeader(msg string) {
-	f.PrintMessage(fmt.Sprintf("# %s", msg))
+	f.PrintMessage(fmt.Sprintf("\n# %s\n", msg))
 }
 
 // PrintSubHeader Print Markdown Sub-Header Message
 func (f *MarkdownFormatter) PrintSubHeader(msg string) {
-	f.PrintMessage(fmt.Sprintf("## %s", msg))
+	f.PrintMessage(fmt.Sprintf("\n## %s\n", msg))
 }
 
 // PrintSeparator Print Markdown Separator
@@ -54,12 +57,12 @@ func (f *MarkdownFormatter) PrintSeparator() {
 
 // PrintError Print Markdown Error
 func (f *MarkdownFormatter) PrintError(msg error) {
-	f.PrintMessage(fmt.Sprintf("> ERROR: %s", msg))
+	f.PrintMessage(fmt.Sprintf("\n> ERROR: %s\n", msg))
 }
 
 // PrintOK Print Markdown Error
 func (f *MarkdownFormatter) PrintOK(msg string) {
-	f.PrintMessage(fmt.Sprintf("> OK: %s", msg))
+	f.PrintMessage(fmt.Sprintf("\n> OK: %s\n", msg))
 }
 
 // PrintCode Print Markdown Code
