@@ -5,6 +5,10 @@ Go Program to get page information from URL.
 
 It can create a standard output (stdout) or Markdown report and also logs to a separate log file.  
 
+~~~
+go get -u github.com/jpnewman/urlinfo
+~~~
+
 ## Install Dependencies
 
 - <https://github.com/golang/dep>
