@@ -6,10 +6,7 @@ urlinfo
 urlinfo.txt
 urlinfo.md
 
-_OUTPUT/
-
-profiling/*
-!profiling/.gitkeep
+*.prof
 
 # Dep
 vendor/

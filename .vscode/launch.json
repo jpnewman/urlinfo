@@ -101,8 +101,8 @@
             "program": "main.go",
             "args": [
                 "-urlFile=./_TestData/urls.txt",
-                "-cpuprofile=./_OUTPUT/cpu.prof",
-                "-memprofile=./_OUTPUT/mem.prof"
+                "-cpuprofile=./cpu.prof",
+                "-memprofile=./mem.prof"
             ]
         }
     ]

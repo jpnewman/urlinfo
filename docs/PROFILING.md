@@ -4,7 +4,7 @@
 ## Create Profiles
 
 ~~~
-./urlinfo -urlFile=./_TestData/urls.txt -cpuprofile=./_OUTPUT/cpu.prof -memprofile=./_OUTPUT/mem.prof
+./urlinfo -urlFile=./_TestData/urls.txt -cpuprofile=./cpu.prof -memprofile=./mem.prof
 ~~~
 
 ## Interpret Profiling
@@ -12,13 +12,13 @@
 > CPU
 
 ~~~
-go tool pprof urlinfo ./_OUTPUT/cpu.prof
+go tool pprof urlinfo ./cpu.prof
 ~~~
 
 > Memory
 
 ~~~
-go tool pprof urlinfo ./_OUTPUT/mem_Done.prof
+go tool pprof urlinfo ./mem_Done.prof
 ~~~
 
 ## Convert
@@ -26,13 +26,13 @@ go tool pprof urlinfo ./_OUTPUT/mem_Done.prof
 > CPU, PDF
 
 ~~~
-go tool pprof --pdf ./_OUTPUT/cpu.prof > cpu.pdf
+go tool pprof --pdf ./cpu.prof > cpu.pdf
 ~~~
 
 > Memory, PDF
 
 ~~~
-go tool pprof --pdf ./_OUTPUT/mem.prof > mem_Done.pdf
+go tool pprof --pdf ./mem.prof > mem_Done.pdf
 ~~~
 
 ## References

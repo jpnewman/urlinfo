@@ -79,6 +79,10 @@ In Dry-Run mode no HTTP request are made, But they are simulated by sleeping for
 
 [TRACING.md](docs/TRACING.md)
 
+## Debugging
+
+[DEBUGGING.md](docs/DEBUGGING.md)
+
 ## Editing
 
 Visual Studio Code (VSCode), on Mac OS X, was used as an IDE.  
