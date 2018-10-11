@@ -114,6 +114,16 @@
             "args": [
                 "-test.v"
             ]
+        },
+        {
+            "name": "Run (Dlv Test - Report)",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/report/report.go",
+            "args": [
+                "-test.v"
+            ]
         }
     ]
 }
