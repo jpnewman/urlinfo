@@ -33,3 +33,6 @@ HTTPS://GOOGLE.COM
 
 # URL with protocal
 https://google.com:80
+
+# Localhost
+http://localhost
