@@ -12,10 +12,10 @@ import (
 
 func TestConsoleSetOutput_stdout(t *testing.T) {
 	var bw *bufio.Writer
-	assert.IsType(t, consoleFormatter.Out, bw)
+	assert.IsType(t, bw, consoleFormatter.Out)
 
 	consoleFormatter.SetOutput(os.Stdout)
-	assert.IsType(t, consoleFormatter.Out, os.Stdout)
+	assert.IsType(t, os.Stdout, consoleFormatter.Out)
 
 	var bb bytes.Buffer
 	writer := bufio.NewWriter(&bb)
