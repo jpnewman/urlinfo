@@ -26,7 +26,7 @@ go build
 > Print optimization decisions
 
 ~~~
-go build -gcflags -m *.go
+go build -o ./urlinfo -gcflags -m *.go
 ~~~
 
 ## Test
