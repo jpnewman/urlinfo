@@ -2,11 +2,10 @@
 package main
 
 import (
-	"fmt"
+	"io"
 	"os"
 	"time"
 
-	logging "github.com/jpnewman/urlinfo/logging"
 	"github.com/jpnewman/urlinfo/profiling"
 	"github.com/jpnewman/urlinfo/report"
 )
@@ -15,15 +14,19 @@ import (
 var Report = report.New()
 
 func main() {
-	defer profiling.Elapsed("Program Done")()
+	LogInit("urlinfo.log")
 
-	logging.LogInit("urlinfo.log")
-	logging.Logger.Infof("Program Started: %s", os.Args)
+	defer profiling.Elapsed("Program Done")([]io.Writer{os.Stdout, RootLogger.Out})
+	Logger.Infof("Program Started: %s", os.Args)
 
 	args := parseArgs()
-	profiling.StartCPUProfiling(args.cpuProfile)
 
-	Report.SetFormatter(args.reportFormat)
+	err := profiling.StartCPUProfiling(args.cpuProfile)
+	if err != nil {
+		Logger.Fatal(err)
+	}
+
+	Report.SetFormatter(*args.reportFormat)
 	Report.SetOutputFile(args.reportFile)
 
 	Report.PrintHeader("URLInfo")
@@ -40,9 +43,11 @@ func main() {
 	})
 
 	defer profiling.StopCPUProfiling(args.cpuProfile)
-	defer profiling.ProfileMem(args.memProfile, "Done")
 
-	fmt.Println("Done!!!")
+	err = profiling.ProfileMem(args.memProfile, "Done")
+	if err != nil {
+		Logger.Fatal(err)
+	}
 
-	logging.LogFileClose()
+	LogFileClose()
 }

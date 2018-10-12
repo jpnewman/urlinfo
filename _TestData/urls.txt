@@ -2,9 +2,12 @@
 
 http://google.com
 https://google.com
+https://www.google.com
 google.com
 
 https://microsoft.com
+
+https://apple.com
 
 https://amazon.co.uk
 

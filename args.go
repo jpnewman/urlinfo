@@ -3,8 +3,6 @@ package main
 import (
 	"flag"
 	"os"
-
-	logging "github.com/jpnewman/urlinfo/logging"
 )
 
 type args struct {
@@ -35,7 +33,7 @@ func parseArgs() args {
 	flag.Parse()
 
 	if *r.urlFile == "" {
-		logging.Logger.Error("Program argument '-urlFile' not specified!")
+		Logger.Error("Program argument '-urlFile' not specified!")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}

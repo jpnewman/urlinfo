@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -37,9 +38,13 @@ func New() *Reporter {
 }
 
 // SetFormatter Set Formatter
-func (r *Reporter) SetFormatter(formatType *string) {
-	fmtType := strings.ToLower(*formatType)
-	if fmtType == "markdown" {
+func (r *Reporter) SetFormatter(formatType string) {
+	fmtType := strings.ToLower(formatType)
+	if fmtType == "none" {
+		r.Formatter = &ConsoleFormatter{
+			Out: ioutil.Discard,
+		}
+	} else if fmtType == "markdown" {
 		r.Formatter = &MarkdownFormatter{
 			Out: os.Stdout,
 		}

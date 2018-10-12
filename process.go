@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -10,8 +11,6 @@ import (
 
 	"github.com/motemen/go-loghttp"
 	"github.com/sirupsen/logrus"
-
-	logging "github.com/jpnewman/urlinfo/logging"
 )
 
 type processURLsArgs struct {
@@ -40,13 +39,13 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 	client := &http.Client{
 		Transport: &loghttp.Transport{
 			LogRequest: func(req *http.Request) {
-				logging.Logger.WithFields(logrus.Fields{
+				Logger.WithFields(logrus.Fields{
 					"method": req.Method,
 					"url":    req.URL,
 				}).Debug("HTTP Request")
 			},
 			LogResponse: func(resp *http.Response) {
-				logging.Logger.WithFields(logrus.Fields{
+				Logger.WithFields(logrus.Fields{
 					"code": resp.StatusCode,
 					"url":  resp.Request.URL,
 				}).Debug("HTTP Response")
@@ -66,7 +65,7 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 }
 
 func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, error) {
-	defer profiling.Elapsed("HTTP Request Time")()
+	defer profiling.Elapsed("HTTP Request Time")([]io.Writer{RootLogger.Out})
 
 	var resp *http.Response
 	var err error
@@ -113,7 +112,7 @@ func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 	if err == nil {
 		defer resp.Body.Close()
 	} else {
-		logging.Logger.Error(err)
+		Logger.Error(err)
 		httpResp.errs = append(httpResp.errs, err)
 	}
 
@@ -142,7 +141,7 @@ func worker(jobs <-chan *httpRequestArgs, results chan<- *httpResponse) {
 	}
 }
 
-func processURLs(urls map[string][]lineDetails, args *processURLsArgs) {
+func processURLs(urls map[string][]lineDetail, args *processURLsArgs) {
 	urlsCount := len(urls)
 
 	Report.PrintHeaderf("Processing URLs %d", urlsCount)

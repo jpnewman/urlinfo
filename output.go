@@ -7,7 +7,6 @@ import (
 	"sort"
 
 	humanize "github.com/dustin/go-humanize"
-	logging "github.com/jpnewman/urlinfo/logging"
 	"github.com/sirupsen/logrus"
 )
 
@@ -48,13 +47,13 @@ func printOutput(args *processURLsArgs, ret *httpResponse) int {
 	for _, e := range ret.errs {
 		if e != nil {
 			Report.PrintError(e)
-			logging.Logger.Error(e)
+			Logger.Error(e)
 
 			errorCount++
 		}
 	}
 
-	if logging.RootLogger.GetLevel() == logrus.DebugLevel {
+	if RootLogger.GetLevel() == logrus.DebugLevel {
 		PrintURLInfo(ret)
 	}
 

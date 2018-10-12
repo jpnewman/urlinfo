@@ -6,19 +6,18 @@ import (
 	"os"
 	"path/filepath"
 	"runtime/pprof"
-
-	logging "github.com/jpnewman/urlinfo/logging"
 )
 
 // StartCPUProfiling Start CPU Profiling
-func StartCPUProfiling(cpuProfile *string) {
+func StartCPUProfiling(cpuProfile *string) error {
+	var err error
 	if *cpuProfile != "" {
-		f, err := os.Create(*cpuProfile)
-		if err != nil {
-			logging.Logger.Fatal(err)
-		}
+		f, errCreate := os.Create(*cpuProfile)
+		err = errCreate
 		pprof.StartCPUProfile(f)
 	}
+
+	return err
 }
 
 // StopCPUProfiling Stop CPU Profiling
@@ -29,18 +28,18 @@ func StopCPUProfiling(cpuProfile *string) {
 }
 
 // ProfileMem Profile Memory
-func ProfileMem(memProfile *string, tag string) {
+func ProfileMem(memProfile *string, tag string) error {
+	var err error
 	if *memProfile != "" {
 		var filename = *memProfile
 		var extension = filepath.Ext(filename)
 		var fileTitle = filename[0 : len(filename)-len(extension)]
 
 		f, err := os.Create(fmt.Sprintf("%s_%s%s", fileTitle, tag, extension))
-		if err != nil {
-			logging.Logger.Fatal(err)
-		}
 		pprof.WriteHeapProfile(f)
 		f.Close()
-		return
+		return err
 	}
+
+	return err
 }
