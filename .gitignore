@@ -17,7 +17,7 @@ vendor/
 
 # Benchmarking
 
-benchmarks.svg
+*.svg
 
 # Disassemblies
 

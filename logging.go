@@ -46,6 +46,11 @@ func LogInit(logFile string) {
 	})
 }
 
+// LogPrintInfo Log Print Info
+func LogPrintInfo(s string) {
+	Logger.Info(s)
+}
+
 // LogFileClose Log File Close
 func LogFileClose() {
 	LogFile.Close()

@@ -2,7 +2,6 @@
 package main
 
 import (
-	"io"
 	"os"
 	"time"
 
@@ -16,7 +15,7 @@ var Report = report.New()
 func main() {
 	LogInit("urlinfo.log")
 
-	defer profiling.Elapsed("Program Done")([]io.Writer{os.Stdout, RootLogger.Out})
+	defer profiling.TimeElapsed("Program Done")(Report.PrintMessage, LogPrintInfo)
 	Logger.Infof("Program Started: %s", os.Args)
 
 	args := parseArgs()

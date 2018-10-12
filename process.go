@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"io"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -65,7 +65,8 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 }
 
 func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, error) {
-	defer profiling.Elapsed("HTTP Request Time")([]io.Writer{RootLogger.Out})
+	defer profiling.TimeElapsed("HTTP Request Time")(Report.PrintMessage)
+	defer profiling.TimeElapsed(fmt.Sprintf("HTTP Request Time: %s", args.url))(LogPrintInfo)
 
 	var resp *http.Response
 	var err error
