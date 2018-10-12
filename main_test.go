@@ -6,15 +6,14 @@ import (
 	"os"
 	"testing"
 
-	logging "github.com/jpnewman/urlinfo/logging"
 	"github.com/sirupsen/logrus"
 )
 
 func MockLogger() {
-	logging.RootLogger = logrus.New()
-	logging.RootLogger.Out = ioutil.Discard
+	RootLogger = logrus.New()
+	RootLogger.Out = ioutil.Discard
 
-	logging.Logger = logging.RootLogger.WithFields(logrus.Fields{
+	Logger = RootLogger.WithFields(logrus.Fields{
 		"type": "test",
 	})
 }
@@ -28,7 +27,7 @@ func setup() {
 func teardown() {
 	fmt.Println("Test Teardown...")
 
-	logging.LogFileClose()
+	LogFileClose()
 }
 
 func TestMain(m *testing.M) {

@@ -93,3 +93,15 @@ func TestHTTPRequest_ClientTimeout(t *testing.T) {
 	netErr, ok := err.(net.Error)
 	assert.True(t, ok && netErr.Timeout())
 }
+
+func BenchmarkProcessURLs(b *testing.B) {
+	b.ReportAllocs()
+
+	urls := helperCreateLineDetails()
+	args := helperCreateProcessURLsArgs(testDefaultTimeout)
+	Report.SetFormatter("none")
+
+	for n := 0; n < b.N; n++ {
+		processURLs(urls, args)
+	}
+}

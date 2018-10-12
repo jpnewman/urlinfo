@@ -6,17 +6,43 @@ import (
 	"time"
 )
 
-func helperCreateTestHTTPRequestArgs(url string, httpTimeout int) *httpRequestArgs {
+var testDefaultURLs = [...]string{
+	"https://google.com",
+	"https://microsoft.com",
+	"https://apple.com",
+	"https://amazon.co.uk",
+	"https://github.com",
+}
+
+func helperCreateProcessURLsArgs(httpTimeout int) *processURLsArgs {
 	timeout := time.Duration(time.Duration(httpTimeout) * time.Millisecond)
 
-	return &httpRequestArgs{
-		url: url,
-		options: &processURLsArgs{
-			httpTimeoutMilliseconds: timeout,
-			numberOfWorkers:         5,
-			getHeadOny:              false,
-			dontFollowRedirects:     false,
-			dryRun:                  false,
-		},
+	return &processURLsArgs{
+		httpTimeoutMilliseconds: timeout,
+		numberOfWorkers:         5,
+		getHeadOny:              false,
+		dontFollowRedirects:     false,
+		dryRun:                  false,
 	}
+}
+
+func helperCreateTestHTTPRequestArgs(url string, httpTimeout int) *httpRequestArgs {
+	return &httpRequestArgs{
+		url:     url,
+		options: helperCreateProcessURLsArgs(httpTimeout),
+	}
+}
+
+func helperCreateLineDetails() map[string][]lineDetail {
+	urls := make(map[string][]lineDetail)
+
+	for i, u := range testDefaultURLs {
+		urls[u] = append(urls[u], lineDetail{
+			lineNumber: i,
+			line:       u,
+			comment:    "",
+		})
+	}
+
+	return urls
 }
