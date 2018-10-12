@@ -28,6 +28,28 @@
             }
         },
         {
+            "name": "Run (urls.txt - No Timeout)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "main.go",
+            "args": [
+                "-urlFile=./_TestData/urls.txt",
+                "-httpTimeout=0"
+            ]
+        },
+        {
+            "name": "Run (urls.txt - 200ms Timeout)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "main.go",
+            "args": [
+                "-urlFile=./_TestData/urls.txt",
+                "-httpTimeout=200"
+            ]
+        },
+        {
             "name": "Run (urls.txt - Debug)",
             "type": "go",
             "request": "launch",
@@ -86,7 +108,7 @@
             "program": "main.go",
             "args": [
                 "-urlFile=./_TestData/urls.txt",
-                "-httpTimeoutSeconds=1",
+                "-httpTimeout=3000",
                 "-dryrun"
             ],
             "env": {
@@ -106,7 +128,7 @@
             ]
         },
         {
-            "name": "Run (Dlv Test)",
+            "name": "Test (Delve)",
             "type": "go",
             "request": "launch",
             "mode": "test",
@@ -116,7 +138,7 @@
             ]
         },
         {
-            "name": "Run (Dlv Test - Report)",
+            "name": "Test (Delve - Report)",
             "type": "go",
             "request": "launch",
             "mode": "test",

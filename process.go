@@ -15,16 +15,16 @@ import (
 )
 
 type processURLsArgs struct {
-	httpTimeoutSeconds  int
-	numberOfWorkers     int
-	getHeadOny          bool
-	dontFollowRedirects bool
-	dryRun              bool
+	httpTimeoutMilliseconds time.Duration
+	numberOfWorkers         int
+	getHeadOny              bool
+	dontFollowRedirects     bool
+	dryRun                  bool
 }
 
-type getHTTPArgs struct {
+type httpRequestArgs struct {
 	url     string
-	options processURLsArgs
+	options *processURLsArgs
 }
 
 type httpResponse struct {
@@ -36,7 +36,7 @@ type httpResponse struct {
 	errs          []error
 }
 
-func createHTTPClient(args getHTTPArgs, timeout time.Duration) *http.Client {
+func createHTTPClient(args *httpRequestArgs) *http.Client {
 	client := &http.Client{
 		Transport: &loghttp.Transport{
 			LogRequest: func(req *http.Request) {
@@ -52,7 +52,7 @@ func createHTTPClient(args getHTTPArgs, timeout time.Duration) *http.Client {
 				}).Debug("HTTP Response")
 			},
 		},
-		Timeout: timeout,
+		Timeout: args.options.httpTimeoutMilliseconds,
 	}
 
 	if args.options.dontFollowRedirects {
@@ -65,7 +65,7 @@ func createHTTPClient(args getHTTPArgs, timeout time.Duration) *http.Client {
 	return client
 }
 
-func httpRequest(args getHTTPArgs, client *http.Client) (*http.Response, error) {
+func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, error) {
 	defer profiling.Elapsed("HTTP Request Time")()
 
 	var resp *http.Response
@@ -74,10 +74,6 @@ func httpRequest(args getHTTPArgs, client *http.Client) (*http.Response, error) 
 		resp, err = client.Head(args.url)
 	} else {
 		resp, err = client.Get(args.url)
-	}
-
-	if err != nil {
-		logging.Logger.Error(err)
 	}
 
 	return resp, err
@@ -100,25 +96,25 @@ func getHTTPResponseBody(resp *http.Response) (string, error) {
 	return string(b), err
 }
 
-func getHTTP(args getHTTPArgs) *httpResponse {
-	timeout := time.Duration(time.Duration(args.options.httpTimeoutSeconds) * time.Second)
-
+func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 	httpResp := new(httpResponse)
-	client := createHTTPClient(args, timeout)
+	client := createHTTPClient(args)
 
 	httpResp.url = args.url
 
 	if args.options.dryRun {
-		time.Sleep(timeout)
+		time.Sleep(args.options.httpTimeoutMilliseconds)
 		httpResp.errs = append(httpResp.errs, errors.New("Dry-Run Mode"))
 		return httpResp
 	}
 
 	resp, err := httpRequest(args, client)
-	httpResp.errs = append(httpResp.errs, err)
 
 	if err == nil {
 		defer resp.Body.Close()
+	} else {
+		logging.Logger.Error(err)
+		httpResp.errs = append(httpResp.errs, err)
 	}
 
 	if resp == nil {
@@ -136,24 +132,24 @@ func getHTTP(args getHTTPArgs) *httpResponse {
 	return httpResp
 }
 
-func worker(jobs <-chan getHTTPArgs, results chan<- httpResponse) {
+func worker(jobs <-chan *httpRequestArgs, results chan<- *httpResponse) {
 	for j := range jobs {
 		var errs []error
-		httpResp := getHTTP(j)
+		httpResp := getHTTPResponse(j)
 		errs = append(errs, httpResp.errs...)
 
-		results <- *httpResp
+		results <- httpResp
 	}
 }
 
-func processURLs(urls map[string][]lineDetails, args processURLsArgs) {
+func processURLs(urls map[string][]lineDetails, args *processURLsArgs) {
 	urlsCount := len(urls)
 
 	Report.PrintHeaderf("Processing URLs %d", urlsCount)
 	Report.PrintSubHeaderf("Workers: %d", args.numberOfWorkers)
 
-	jobs := make(chan getHTTPArgs, urlsCount)
-	results := make(chan httpResponse, urlsCount)
+	jobs := make(chan *httpRequestArgs, urlsCount)
+	results := make(chan *httpResponse, urlsCount)
 	defer close(results)
 
 	for w := 1; w <= args.numberOfWorkers; w++ {
@@ -161,7 +157,7 @@ func processURLs(urls map[string][]lineDetails, args processURLsArgs) {
 	}
 
 	for key := range urls {
-		jobs <- getHTTPArgs{
+		jobs <- &httpRequestArgs{
 			url:     key,
 			options: args,
 		}
@@ -171,7 +167,7 @@ func processURLs(urls map[string][]lineDetails, args processURLsArgs) {
 	errorCount := 0
 	for j := 0; j < urlsCount; j++ {
 		ret := <-results
-		errorCount += printOutput(args, &ret)
+		errorCount += printOutput(args, ret)
 	}
 
 	Report.PrintHeaderf("Processed %d URLs with %d Errors", urlsCount, errorCount)

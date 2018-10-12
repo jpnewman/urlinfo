@@ -9,7 +9,7 @@ import (
 
 type args struct {
 	urlFile             *string
-	httpTimeoutSeconds  *int
+	httpTimeout         *int
 	numberOfWorkers     *int
 	getHeadOny          *bool
 	dontFollowRedirects *bool
@@ -23,7 +23,7 @@ type args struct {
 func parseArgs() args {
 	r := args{}
 	r.urlFile = flag.String("urlFile", "", "[Required] Path to file containing a list of URLs.")
-	r.httpTimeoutSeconds = flag.Int("httpTimeoutSeconds", 30, "Http Timeout")
+	r.httpTimeout = flag.Int("httpTimeout", 3000, "Http Timeout in Milliseconds")
 	r.numberOfWorkers = flag.Int("numberOfWorkers", 5, "Number of workers")
 	r.getHeadOny = flag.Bool("getHeadOny", false, "Get HTTP Headers only")
 	r.dontFollowRedirects = flag.Bool("dontFollowRedirects", false, "Don't Follow HTTP Redirects")

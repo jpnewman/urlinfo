@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	logging "github.com/jpnewman/urlinfo/logging"
 	"github.com/jpnewman/urlinfo/profiling"
@@ -29,12 +30,12 @@ func main() {
 	urls, errs := readURLFile(args.urlFile, 5)
 	printFileDetails(urls, errs)
 
-	processURLs(urls, processURLsArgs{
-		httpTimeoutSeconds:  *args.httpTimeoutSeconds,
-		numberOfWorkers:     *args.numberOfWorkers,
-		getHeadOny:          *args.getHeadOny,
-		dontFollowRedirects: *args.dontFollowRedirects,
-		dryRun:              *args.dryRun,
+	processURLs(urls, &processURLsArgs{
+		httpTimeoutMilliseconds: time.Duration(time.Duration(*args.httpTimeout) * time.Millisecond),
+		numberOfWorkers:         *args.numberOfWorkers,
+		getHeadOny:              *args.getHeadOny,
+		dontFollowRedirects:     *args.dontFollowRedirects,
+		dryRun:                  *args.dryRun,
 	})
 
 	defer profiling.StopCPUProfiling(args.cpuProfile)

@@ -69,10 +69,10 @@ LOG_LEVEL=Debug ./urlinfo -urlFile=./_TestData/urls.txt
 
 > Dry-Run
 
-In Dry-Run mode no HTTP request are made, But they are simulated by sleeping for ```-httpTimeoutSeconds```.
+In Dry-Run mode no HTTP request are made, But they are simulated by sleeping for ```-httpTimeout```.
 
 ~~~
-./urlinfo -urlFile=./_TestData/urls.txt -httpTimeoutSeconds=1 -dryrun
+./urlinfo -urlFile=./_TestData/urls.txt -httpTimeout=1 -dryrun
 ~~~
 
 ## Profiling
