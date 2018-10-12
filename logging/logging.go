@@ -15,7 +15,7 @@ var RootLogger = logrus.New()
 // Logger Logrus Entry with ID
 var Logger *logrus.Entry
 
-// Log File
+// LogFile .
 var LogFile *os.File
 
 // LogInit Initialize Logrus log
