@@ -29,6 +29,12 @@ go build
 go build -o ./urlinfo -gcflags -m *.go
 ~~~
 
+> Print more detailed optimization decisions
+
+~~~
+go build -o ./urlinfo -gcflags '-m -m' *.go 2> op_decisions.log
+~~~
+
 ## Test
 
 [TESTING.md](docs/TESTING.md)

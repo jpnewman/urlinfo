@@ -11,6 +11,10 @@ urlinfo.md
 # Dep
 vendor/
 
+# Performance Profiles
+
+*.pprof
+
 # Disassemblies
 
 *.asm
