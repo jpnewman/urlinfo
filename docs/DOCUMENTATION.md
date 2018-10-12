@@ -1,7 +1,7 @@
 
 # Documentation
 
-## Generate
+## View
 
 ~~~
 godoc -http=localhost:6060
