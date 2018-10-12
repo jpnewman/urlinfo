@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// TODO: Get formatted io.writer for logrus or change this function.
 // Elapsed Elapsed Time, call with a defer
+// TODO: Get formatted io.writer for logrus or change this function.
 func Elapsed(msg string) func([]io.Writer) {
 	startTime := time.Now()
 	return func(wa []io.Writer) {
