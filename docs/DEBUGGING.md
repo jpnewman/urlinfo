@@ -21,6 +21,12 @@ GOCACHE=off go build -x -gcflags='all=-N -l' -tags nopkcs11 -ldflags='-linkmode 
 objdump -section-headers ./urlinfo
 ~~~
 
+## Disassemble
+
+~~~
+go tool objdump -S ./urlinfo > objdump.asm
+~~~
+
 ## Run Delve (dlv)
 
 ### Build and Debug

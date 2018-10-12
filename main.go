@@ -1,3 +1,4 @@
+// Go Program to get page information from URLs.
 package main
 
 import (

@@ -1,3 +1,4 @@
+// Package logging is a small package for logrus logging.
 package logging
 
 import (

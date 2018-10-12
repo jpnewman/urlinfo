@@ -11,6 +11,10 @@ urlinfo.md
 # Dep
 vendor/
 
+# Disassemblies
+
+*.asm
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

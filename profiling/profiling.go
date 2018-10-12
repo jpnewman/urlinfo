@@ -1,3 +1,4 @@
+// Package profiling is a small package for profiling.
 package profiling
 
 import (
