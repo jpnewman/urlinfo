@@ -99,6 +99,8 @@ func BenchmarkProcessURLs(b *testing.B) {
 
 	urls := helperCreateLineDetails()
 	args := helperCreateProcessURLsArgs(testDefaultTimeout)
+	args.dryRun = true
+
 	Report.SetFormatter("none")
 
 	for n := 0; n < b.N; n++ {
