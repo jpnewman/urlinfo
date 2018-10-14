@@ -18,6 +18,7 @@ vendor/
 # Benchmarking
 
 *.svg
+*.pdf
 
 # Disassemblies
 
