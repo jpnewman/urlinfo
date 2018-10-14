@@ -27,7 +27,7 @@ func TestCreateHTTPClient(t *testing.T) {
 func TestHTTPRequest_Localhost(t *testing.T) {
 	args := helperCreateTestHTTPRequestArgs(testDefaultURL, testDefaultTimeout)
 	client := createHTTPClient(args)
-	resp, err := httpRequest(args, client)
+	resp, _, err := httpRequest(args, client)
 
 	assert.NotNil(t, err)
 	assert.Nil(t, resp)
@@ -42,7 +42,7 @@ func TestHTTPRequest_Localhost(t *testing.T) {
 func TestHTTPRequest_LocalhostMock(t *testing.T) {
 	args := helperCreateTestHTTPRequestArgs(testDefaultURL, testDefaultTimeout)
 	client := mockCreateHTTPClient(t, args, 401, 0)
-	resp, err := httpRequest(args, client)
+	resp, _, err := httpRequest(args, client)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
@@ -64,7 +64,7 @@ func TestHTTPRequest_MockTimeout(t *testing.T) {
 	assert.True(t, args.options.httpTimeoutMilliseconds < responseTimeMillisecond)
 
 	client := mockCreateHTTPClient(t, args, 200, responseTimeMillisecond)
-	resp, err := httpRequest(args, client)
+	resp, _, err := httpRequest(args, client)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
@@ -85,7 +85,7 @@ func TestHTTPRequest_ClientTimeout(t *testing.T) {
 	args := helperCreateTestHTTPRequestArgs(url, testDefaultTimeout)
 
 	client := createHTTPClient(args)
-	resp, err := httpRequest(args, client)
+	resp, _, err := httpRequest(args, client)
 
 	assert.NotNil(t, err)
 	assert.Nil(t, resp)
