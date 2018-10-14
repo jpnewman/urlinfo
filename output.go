@@ -62,6 +62,7 @@ func printOutput(args *processURLsArgs, ret *httpResponse) int {
 	} else if errorCount == 0 {
 		bodyLen := uint64(len(ret.body))
 		Report.PrintMessagef("Body Length: %d (%s)", bodyLen, humanize.Bytes(bodyLen))
+		Report.PrintMessagef("Request Time: %v", ret.requestTime)
 	}
 
 	PrintStats()

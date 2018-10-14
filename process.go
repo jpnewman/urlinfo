@@ -2,12 +2,10 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
 
-	"github.com/jpnewman/urlinfo/profiling"
 	"github.com/motemen/go-loghttp"
 	"github.com/sirupsen/logrus"
 )
@@ -30,6 +28,7 @@ type httpResponse struct {
 	statusCode    int
 	contentLength int64
 	headers       map[string][]string
+	requestTime   time.Duration
 	body          string
 	errs          []error
 }
@@ -63,19 +62,19 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 	return client
 }
 
-func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, error) {
-	defer profiling.TimeElapsed("HTTP Request Time")(Report.PrintMessage)
-	defer profiling.TimeElapsed(fmt.Sprintf("HTTP Request Time: %s", args.url))(LogPrintInfo)
-
+func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, time.Duration, error) {
 	var resp *http.Response
 	var err error
+
+	startTime := time.Now()
 	if args.options.getHeadOny {
 		resp, err = client.Head(args.url)
 	} else {
 		resp, err = client.Get(args.url)
 	}
+	requestTime := time.Since(startTime)
 
-	return resp, err
+	return resp, requestTime, err
 }
 
 func getHTTPResponseBody(resp *http.Response) (string, error) {
@@ -107,7 +106,7 @@ func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 		return httpResp
 	}
 
-	resp, err := httpRequest(args, client)
+	resp, requestTime, err := httpRequest(args, client)
 
 	if err != nil {
 		Logger.Error(err)
@@ -121,6 +120,7 @@ func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 	httpResp.statusCode = resp.StatusCode
 	httpResp.contentLength = resp.ContentLength
 	httpResp.headers = resp.Header
+	httpResp.requestTime = requestTime
 
 	body, bodyErr := getHTTPResponseBody(resp)
 	httpResp.body = body
