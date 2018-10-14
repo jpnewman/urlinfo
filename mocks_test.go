@@ -19,14 +19,14 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 // NewTestHTTPClient returns *http.Client with Transport replaced to avoid making real calls
-func NewTestHTTPClient(fn RoundTripFunc, args *httpRequestArgs) *http.Client {
+func NewTestHTTPClient(fn RoundTripFunc, args httpRequestArgs) *http.Client {
 	return &http.Client{
 		Transport: RoundTripFunc(fn),
 		Timeout:   args.options.httpTimeoutMilliseconds,
 	}
 }
 
-func mockCreateHTTPClient(t *testing.T, args *httpRequestArgs, statusCode int, responseTimeMillisecond time.Duration) *http.Client {
+func mockCreateHTTPClient(t *testing.T, args httpRequestArgs, statusCode int, responseTimeMillisecond time.Duration) *http.Client {
 	return NewTestHTTPClient(
 		func(req *http.Request) *http.Response {
 			resp := &http.Response{

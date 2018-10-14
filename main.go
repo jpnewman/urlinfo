@@ -15,22 +15,32 @@ var Report = report.New()
 func main() {
 	LogInit("urlinfo.log")
 
+	args := parseArgs()
+
+	defer func() {
+		errDoneProf := profiling.ProfileMem(args.memProfile, "Done")
+		if errDoneProf != nil {
+			Logger.Fatal(errDoneProf)
+		}
+	}()
+
 	defer profiling.TimeElapsed("Program Done")(Report.PrintMessage, LogPrintInfo)
 	Logger.Infof("Program Started: %s", os.Args)
 
-	args := parseArgs()
-
-	err := profiling.StartCPUProfiling(args.cpuProfile)
-	if err != nil {
-		Logger.Fatal(err)
+	errsProfiling := profiling.StartCPUProfiling(args.cpuProfile)
+	for _, errProfiling := range errsProfiling {
+		if errProfiling != nil {
+			Logger.Fatal(errProfiling)
+		}
 	}
+	defer profiling.StopCPUProfiling(args.cpuProfile)
 
 	Report.SetFormatter(*args.reportFormat)
 	Report.SetOutputFile(args.reportFile)
 
 	Report.PrintHeader("URLInfo")
 
-	urls, errs := readURLFile(args.urlFile, 5)
+	urls, errs := readURLFile(args.urlFile)
 	printFileDetails(urls, errs)
 
 	processURLs(urls, &processURLsArgs{
@@ -40,13 +50,6 @@ func main() {
 		dontFollowRedirects:     *args.dontFollowRedirects,
 		dryRun:                  *args.dryRun,
 	})
-
-	defer profiling.StopCPUProfiling(args.cpuProfile)
-
-	err = profiling.ProfileMem(args.memProfile, "Done")
-	if err != nil {
-		Logger.Fatal(err)
-	}
 
 	LogFileClose()
 }

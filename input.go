@@ -57,7 +57,7 @@ func parseURLFileLine(line string, lineNum int, urls map[string][]lineDetail) []
 	return errs
 }
 
-func readURLFile(path *string, count int) (map[string][]lineDetail, []lineError) {
+func readURLFile(path *string) (map[string][]lineDetail, []lineError) {
 	Report.PrintSubHeaderf("Parsing URL file: %s", *path)
 
 	var lineRegEx = regexp.MustCompile(`(^\s*#.*$|^\s*$)`)

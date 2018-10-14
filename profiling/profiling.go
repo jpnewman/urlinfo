@@ -5,19 +5,22 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"runtime/pprof"
 )
 
 // StartCPUProfiling Start CPU Profiling
-func StartCPUProfiling(cpuProfile *string) error {
-	var err error
+func StartCPUProfiling(cpuProfile *string) []error {
+	var errs []error
 	if *cpuProfile != "" {
 		f, errCreate := os.Create(*cpuProfile)
-		err = errCreate
-		pprof.StartCPUProfile(f)
+		errs = append(errs, errCreate)
+
+		errStartProf := pprof.StartCPUProfile(f)
+		errs = append(errs, errStartProf)
 	}
 
-	return err
+	return errs
 }
 
 // StopCPUProfiling Stop CPU Profiling
@@ -34,6 +37,8 @@ func ProfileMem(memProfile *string, tag string) error {
 		var filename = *memProfile
 		var extension = filepath.Ext(filename)
 		var fileTitle = filename[0 : len(filename)-len(extension)]
+
+		runtime.GC()
 
 		f, err := os.Create(fmt.Sprintf("%s_%s%s", fileTitle, tag, extension))
 		pprof.WriteHeapProfile(f)

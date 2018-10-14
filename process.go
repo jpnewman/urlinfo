@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/jpnewman/urlinfo/profiling"
-
 	"github.com/motemen/go-loghttp"
 	"github.com/sirupsen/logrus"
 )
@@ -35,7 +34,7 @@ type httpResponse struct {
 	errs          []error
 }
 
-func createHTTPClient(args *httpRequestArgs) *http.Client {
+func createHTTPClient(args httpRequestArgs) *http.Client {
 	client := &http.Client{
 		Transport: &loghttp.Transport{
 			LogRequest: func(req *http.Request) {
@@ -64,7 +63,7 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 	return client
 }
 
-func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, error) {
+func httpRequest(args httpRequestArgs, client *http.Client) (*http.Response, error) {
 	defer profiling.TimeElapsed("HTTP Request Time")(Report.PrintMessage)
 	defer profiling.TimeElapsed(fmt.Sprintf("HTTP Request Time: %s", args.url))(LogPrintInfo)
 
@@ -96,7 +95,7 @@ func getHTTPResponseBody(resp *http.Response) (string, error) {
 	return string(b), err
 }
 
-func getHTTPResponse(args *httpRequestArgs) *httpResponse {
+func getHTTPResponse(args httpRequestArgs) *httpResponse {
 	httpResp := new(httpResponse)
 	client := createHTTPClient(args)
 
@@ -110,9 +109,7 @@ func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 
 	resp, err := httpRequest(args, client)
 
-	if err == nil {
-		defer resp.Body.Close()
-	} else {
+	if err != nil {
 		Logger.Error(err)
 		httpResp.errs = append(httpResp.errs, err)
 	}
@@ -129,10 +126,12 @@ func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 	httpResp.body = body
 	httpResp.errs = append(httpResp.errs, bodyErr)
 
+	defer resp.Body.Close()
+
 	return httpResp
 }
 
-func worker(jobs <-chan *httpRequestArgs, results chan<- *httpResponse) {
+func worker(jobs <-chan httpRequestArgs, results chan<- *httpResponse) {
 	for j := range jobs {
 		var errs []error
 		httpResp := getHTTPResponse(j)
@@ -148,7 +147,7 @@ func processURLs(urls map[string][]lineDetail, args *processURLsArgs) {
 	Report.PrintHeaderf("Processing URLs %d", urlsCount)
 	Report.PrintSubHeaderf("Workers: %d", args.numberOfWorkers)
 
-	jobs := make(chan *httpRequestArgs, urlsCount)
+	jobs := make(chan httpRequestArgs, urlsCount)
 	results := make(chan *httpResponse, urlsCount)
 	defer close(results)
 
@@ -157,7 +156,7 @@ func processURLs(urls map[string][]lineDetail, args *processURLsArgs) {
 	}
 
 	for key := range urls {
-		jobs <- &httpRequestArgs{
+		jobs <- httpRequestArgs{
 			url:     key,
 			options: args,
 		}
