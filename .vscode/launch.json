@@ -50,6 +50,17 @@
             ]
         },
         {
+            "name": "Run (urls.txt - 20 Workers)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "main.go",
+            "args": [
+                "-urlFile=./_TestData/urls.txt",
+                "-numberOfWorkers=20"
+            ]
+        },
+        {
             "name": "Run (urls.txt - Debug)",
             "type": "go",
             "request": "launch",
