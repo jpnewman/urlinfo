@@ -43,13 +43,16 @@ func main() {
 	urls, errs := readURLFile(args.urlFile)
 	printFileDetails(urls, errs)
 
-	processURLs(urls, &processURLsArgs{
+	pArgs := processURLsArgs{
 		httpTimeoutMilliseconds: time.Duration(time.Duration(*args.httpTimeout) * time.Millisecond),
 		numberOfWorkers:         *args.numberOfWorkers,
 		getHeadOny:              *args.getHeadOny,
 		dontFollowRedirects:     *args.dontFollowRedirects,
 		dryRun:                  *args.dryRun,
-	})
+	}
+
+	client := createHTTPClient(pArgs.httpTimeoutMilliseconds, pArgs.dontFollowRedirects)
+	processURLs(urls, &pArgs, client)
 
 	LogFileClose()
 }

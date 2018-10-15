@@ -14,8 +14,8 @@ var testDefaultURL = "http://localhost:123456"
 var testDefaultTimeout = 3000
 
 func TestCreateHTTPClient(t *testing.T) {
-	args := helperCreateTestHTTPRequestArgs(testDefaultURL, testDefaultTimeout)
-	client := createHTTPClient(args)
+	args := helperCreateProcessURLsArgs(testDefaultTimeout)
+	client := createHTTPClient(args.httpTimeoutMilliseconds, args.dontFollowRedirects)
 
 	var httpClient *http.Client
 	assert.IsType(t, httpClient, client)
@@ -25,9 +25,9 @@ func TestCreateHTTPClient(t *testing.T) {
 }
 
 func TestHTTPRequest_Localhost(t *testing.T) {
-	args := helperCreateTestHTTPRequestArgs(testDefaultURL, testDefaultTimeout)
-	client := createHTTPClient(args)
-	resp, _, err := httpRequest(args, client)
+	args := helperCreateProcessURLsArgs(testDefaultTimeout)
+	client := createHTTPClient(args.httpTimeoutMilliseconds, args.dontFollowRedirects)
+	resp, _, err := httpRequest(testDefaultURL, args, client)
 
 	assert.NotNil(t, err)
 	assert.Nil(t, resp)
@@ -40,9 +40,9 @@ func TestHTTPRequest_Localhost(t *testing.T) {
 }
 
 func TestHTTPRequest_LocalhostMock(t *testing.T) {
-	args := helperCreateTestHTTPRequestArgs(testDefaultURL, testDefaultTimeout)
-	client := mockCreateHTTPClient(t, args, 401, 0)
-	resp, _, err := httpRequest(args, client)
+	args := helperCreateProcessURLsArgs(testDefaultTimeout)
+	client := mockCreateHTTPClient(t, args.httpTimeoutMilliseconds, 401, 0)
+	resp, _, err := httpRequest(testDefaultURL, args, client)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
@@ -58,13 +58,13 @@ func TestHTTPRequest_LocalhostMock(t *testing.T) {
 func TestHTTPRequest_MockTimeout(t *testing.T) {
 	t.Skip("Skipping test as it's not working as expected.")
 
-	args := helperCreateTestHTTPRequestArgs(testDefaultURL, testDefaultTimeout)
+	args := helperCreateProcessURLsArgs(testDefaultTimeout)
 	responseTimeMillisecond := time.Duration(time.Duration(testDefaultTimeout*2) * time.Millisecond)
 
-	assert.True(t, args.options.httpTimeoutMilliseconds < responseTimeMillisecond)
+	assert.True(t, args.httpTimeoutMilliseconds < responseTimeMillisecond)
 
-	client := mockCreateHTTPClient(t, args, 200, responseTimeMillisecond)
-	resp, _, err := httpRequest(args, client)
+	client := mockCreateHTTPClient(t, args.httpTimeoutMilliseconds, 200, responseTimeMillisecond)
+	resp, _, err := httpRequest(testDefaultURL, args, client)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
@@ -82,10 +82,10 @@ func TestHTTPRequest_ClientTimeout(t *testing.T) {
 	server := newHTTPTestServer(t, responseTimeMillisecond)
 	url := server.URL
 
-	args := helperCreateTestHTTPRequestArgs(url, testDefaultTimeout)
+	args := helperCreateProcessURLsArgs(testDefaultTimeout)
 
-	client := createHTTPClient(args)
-	resp, _, err := httpRequest(args, client)
+	client := createHTTPClient(args.httpTimeoutMilliseconds, args.dontFollowRedirects)
+	resp, _, err := httpRequest(url, args, client)
 
 	assert.NotNil(t, err)
 	assert.Nil(t, resp)
@@ -98,12 +98,15 @@ func BenchmarkProcessURLs(b *testing.B) {
 	b.ReportAllocs()
 
 	urls := helperCreateLineDetails()
-	args := helperCreateProcessURLsArgs(testDefaultTimeout)
+	args := helperCreateProcessURLsArgs(200)
 	args.dryRun = true
+	args.numberOfWorkers = 5
 
 	Report.SetFormatter("none")
 
+	client := createHTTPClient(args.httpTimeoutMilliseconds, args.dontFollowRedirects)
+
 	for n := 0; n < b.N; n++ {
-		processURLs(urls, args)
+		processURLs(urls, args, client)
 	}
 }

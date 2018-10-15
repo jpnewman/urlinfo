@@ -18,11 +18,6 @@ type processURLsArgs struct {
 	dryRun                  bool
 }
 
-type httpRequestArgs struct {
-	url     string
-	options *processURLsArgs
-}
-
 type httpResponse struct {
 	url           string
 	statusCode    int
@@ -33,7 +28,7 @@ type httpResponse struct {
 	errs          []error
 }
 
-func createHTTPClient(args *httpRequestArgs) *http.Client {
+func createHTTPClient(httpTimeoutMilliseconds time.Duration, dontFollowRedirects bool) *http.Client {
 	client := &http.Client{
 		Transport: &loghttp.Transport{
 			LogRequest: func(req *http.Request) {
@@ -49,10 +44,10 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 				}).Debug("HTTP Response")
 			},
 		},
-		Timeout: args.options.httpTimeoutMilliseconds,
+		Timeout: httpTimeoutMilliseconds,
 	}
 
-	if args.options.dontFollowRedirects {
+	if dontFollowRedirects {
 		client.CheckRedirect =
 			func(req *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
@@ -62,15 +57,15 @@ func createHTTPClient(args *httpRequestArgs) *http.Client {
 	return client
 }
 
-func httpRequest(args *httpRequestArgs, client *http.Client) (*http.Response, time.Duration, error) {
+func httpRequest(url string, args *processURLsArgs, client *http.Client) (*http.Response, time.Duration, error) {
 	var resp *http.Response
 	var err error
 
 	startTime := time.Now()
-	if args.options.getHeadOny {
-		resp, err = client.Head(args.url)
+	if args.getHeadOny {
+		resp, err = client.Head(url)
 	} else {
-		resp, err = client.Get(args.url)
+		resp, err = client.Get(url)
 	}
 	requestTime := time.Since(startTime)
 
@@ -94,19 +89,17 @@ func getHTTPResponseBody(resp *http.Response) (string, error) {
 	return string(b), err
 }
 
-func getHTTPResponse(args *httpRequestArgs) *httpResponse {
+func getHTTPResponse(url string, args *processURLsArgs, client *http.Client) *httpResponse {
 	httpResp := new(httpResponse)
-	client := createHTTPClient(args)
+	httpResp.url = url
 
-	httpResp.url = args.url
-
-	if args.options.dryRun {
-		time.Sleep(args.options.httpTimeoutMilliseconds)
+	if args.dryRun {
+		time.Sleep(args.httpTimeoutMilliseconds)
 		httpResp.errs = append(httpResp.errs, errors.New("Dry-Run Mode"))
 		return httpResp
 	}
 
-	resp, requestTime, err := httpRequest(args, client)
+	resp, requestTime, err := httpRequest(url, args, client)
 
 	if err != nil {
 		Logger.Error(err)
@@ -131,35 +124,32 @@ func getHTTPResponse(args *httpRequestArgs) *httpResponse {
 	return httpResp
 }
 
-func worker(jobs <-chan *httpRequestArgs, results chan<- *httpResponse) {
+func worker(jobs <-chan string, results chan<- *httpResponse, args *processURLsArgs, client *http.Client) {
 	for j := range jobs {
 		var errs []error
-		httpResp := getHTTPResponse(j)
+		httpResp := getHTTPResponse(j, args, client)
 		errs = append(errs, httpResp.errs...)
 
 		results <- httpResp
 	}
 }
 
-func processURLs(urls map[string][]lineDetail, args *processURLsArgs) {
+func processURLs(urls map[string][]lineDetail, args *processURLsArgs, client *http.Client) {
 	urlsCount := len(urls)
 
 	Report.PrintHeaderf("Processing URLs %d", urlsCount)
 	Report.PrintSubHeaderf("Workers: %d", args.numberOfWorkers)
 
-	jobs := make(chan *httpRequestArgs, urlsCount)
+	jobs := make(chan string, urlsCount)
 	results := make(chan *httpResponse, urlsCount)
 	defer close(results)
 
 	for w := 1; w <= args.numberOfWorkers; w++ {
-		go worker(jobs, results)
+		go worker(jobs, results, args, client)
 	}
 
 	for key := range urls {
-		jobs <- &httpRequestArgs{
-			url:     key,
-			options: args,
-		}
+		jobs <- key
 	}
 	close(jobs)
 

@@ -26,13 +26,6 @@ func helperCreateProcessURLsArgs(httpTimeout int) *processURLsArgs {
 	}
 }
 
-func helperCreateTestHTTPRequestArgs(url string, httpTimeout int) *httpRequestArgs {
-	return &httpRequestArgs{
-		url:     url,
-		options: helperCreateProcessURLsArgs(httpTimeout),
-	}
-}
-
 func helperCreateLineDetails() map[string][]lineDetail {
 	urls := make(map[string][]lineDetail)
 
