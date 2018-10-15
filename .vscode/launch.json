@@ -132,6 +132,7 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
+            "preLaunchTask": "build",
             "program": "main.go",
             "args": [
                 "-test.v"
@@ -142,6 +143,7 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
+            "preLaunchTask": "build",
             "program": "${workspaceFolder}/report/report.go",
             "args": [
                 "-test.v"
@@ -152,6 +154,7 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
+            "preLaunchTask": "build",
             "program": "${workspaceFolder}/profiling/profiling.go",
             "args": [
                 "-test.v"
@@ -162,6 +165,7 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
+            "preLaunchTask": "build",
             "program": "main.go",
             "args": [
                 "-test.v",
@@ -173,6 +177,7 @@
             "name": "Benchmark (Delve - Report)",
             "type": "go",
             "request": "launch",
+            "preLaunchTask": "build",
             "mode": "test",
             "program": "${workspaceFolder}/report/report.go",
             "args": [
@@ -185,6 +190,7 @@
             "name": "Benchmark (Delve - Profiling)",
             "type": "go",
             "request": "launch",
+            "preLaunchTask": "build",
             "mode": "test",
             "program": "${workspaceFolder}/profiling/profiling.go",
             "args": [
