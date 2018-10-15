@@ -8,3 +8,4 @@
 - Run Load and Performance Tests.
 - Add support for a text file output without ANSI colors.
 - Add support for a HTML report.
+- Look at adding support for CSV output.

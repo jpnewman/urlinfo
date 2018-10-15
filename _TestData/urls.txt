@@ -2,9 +2,12 @@
 
 http://google.com
 https://google.com
+https://www.google.com
 google.com
 
 https://microsoft.com
+
+https://apple.com
 
 https://amazon.co.uk
 
@@ -33,3 +36,6 @@ HTTPS://GOOGLE.COM
 
 # URL with protocal
 https://google.com:80
+
+# Localhost
+http://localhost

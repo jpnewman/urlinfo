@@ -1,3 +1,4 @@
+// Package report generates console and Markdown output.
 package report
 
 import (

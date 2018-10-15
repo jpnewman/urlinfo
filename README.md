@@ -1,9 +1,13 @@
 
 # URLInfo
 
-Go Program to get page information from URL.
+Go Program to get page information from URLs.
 
-It can create a standard output (stdout) or Markdown report and also logs to a separate log file.  
+It can create a standard output (stdout) or Markdown report and also logs to a separate log file.
+
+~~~
+go get -u github.com/jpnewman/urlinfo
+~~~
 
 ## Install Dependencies
 
@@ -22,7 +26,13 @@ go build
 > Print optimization decisions
 
 ~~~
-go build -gcflags -m *.go
+go build -o ./urlinfo -gcflags -m *.go
+~~~
+
+> Print more detailed optimization decisions
+
+~~~
+go build -o ./urlinfo -gcflags '-m -m' *.go 2> op_decisions.log
 ~~~
 
 ## Test
@@ -65,10 +75,10 @@ LOG_LEVEL=Debug ./urlinfo -urlFile=./_TestData/urls.txt
 
 > Dry-Run
 
-In Dry-Run mode no HTTP request are made, But they are simulated by sleeping for ```-httpTimeoutMilliseconds```.
+In Dry-Run mode no HTTP request are made, But they are simulated by sleeping for ```-httpTimeout```.
 
 ~~~
-./urlinfo -urlFile=./_TestData/urls.txt -httpTimeoutMilliseconds=1 -dryrun
+./urlinfo -urlFile=./_TestData/urls.txt -httpTimeout=1 -dryrun
 ~~~
 
 ## Profiling
@@ -82,6 +92,10 @@ In Dry-Run mode no HTTP request are made, But they are simulated by sleeping for
 ## Debugging
 
 [DEBUGGING.md](docs/DEBUGGING.md)
+
+## Documentation
+
+[DOCUMENTATION.md](docs/DOCUMENTATION.md)
 
 ## Editing
 

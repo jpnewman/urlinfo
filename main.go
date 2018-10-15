@@ -1,8 +1,10 @@
+// Go Program to get page information from URLs.
 package main
 
 import (
 	"fmt"
 	"os"
+	"time"
 
 	logging "github.com/jpnewman/urlinfo/logging"
 	"github.com/jpnewman/urlinfo/profiling"
@@ -26,11 +28,11 @@ func main() {
 
 	Report.PrintHeader("URLInfo")
 
-	urls, errs := readURLFile(args.urlFile, 5)
+	urls, errs := readURLFile(args.urlFile)
 	printFileDetails(urls, errs)
 
 	processURLs(urls, processURLsArgs{
-		httpTimeoutMilliseconds: *args.httpTimeoutMilliseconds,
+		httpTimeoutMilliseconds: time.Duration(time.Duration(*args.httpTimeout) * time.Millisecond),
 		numberOfWorkers:         *args.numberOfWorkers,
 		getHeadOny:              *args.getHeadOny,
 		dontFollowRedirects:     *args.dontFollowRedirects,

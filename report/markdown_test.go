@@ -12,10 +12,10 @@ import (
 
 func TestMarkdownSetOutput_stdout(t *testing.T) {
 	var bw *bufio.Writer
-	assert.IsType(t, markdownFormatter.Out, bw)
+	assert.IsType(t, bw, markdownFormatter.Out)
 
 	markdownFormatter.SetOutput(os.Stdout)
-	assert.IsType(t, markdownFormatter.Out, os.Stdout)
+	assert.IsType(t, os.Stdout, markdownFormatter.Out)
 
 	var bb bytes.Buffer
 	writer := bufio.NewWriter(&bb)

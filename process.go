@@ -15,14 +15,14 @@ import (
 )
 
 type processURLsArgs struct {
-	httpTimeoutMilliseconds int
+	httpTimeoutMilliseconds time.Duration
 	numberOfWorkers         int
 	getHeadOny              bool
 	dontFollowRedirects     bool
 	dryRun                  bool
 }
 
-type getHTTPArgs struct {
+type httpRequestArgs struct {
 	url     string
 	options processURLsArgs
 }
@@ -36,7 +36,7 @@ type httpResponse struct {
 	errs          []error
 }
 
-func createHTTPClient(args getHTTPArgs, timeout time.Duration) *http.Client {
+func createHTTPClient(args httpRequestArgs, timeout time.Duration) *http.Client {
 	client := &http.Client{
 		Transport: &loghttp.Transport{
 			LogRequest: func(req *http.Request) {
@@ -65,7 +65,7 @@ func createHTTPClient(args getHTTPArgs, timeout time.Duration) *http.Client {
 	return client
 }
 
-func httpRequest(args getHTTPArgs, client *http.Client) (*http.Response, error) {
+func httpRequest(args httpRequestArgs, client *http.Client) (*http.Response, error) {
 	defer profiling.Elapsed("HTTP Request Time")()
 
 	var resp *http.Response
@@ -100,16 +100,14 @@ func getHTTPResponseBody(resp *http.Response) (string, error) {
 	return string(b), err
 }
 
-func getHTTP(args getHTTPArgs) *httpResponse {
-	timeout := time.Duration(time.Duration(args.options.httpTimeoutMilliseconds) * time.Millisecond)
-
+func getHTTPResponse(args httpRequestArgs) *httpResponse {
 	httpResp := new(httpResponse)
-	client := createHTTPClient(args, timeout)
+	client := createHTTPClient(args, args.options.httpTimeoutMilliseconds)
 
 	httpResp.url = args.url
 
 	if args.options.dryRun {
-		time.Sleep(timeout)
+		time.Sleep(args.options.httpTimeoutMilliseconds)
 		httpResp.errs = append(httpResp.errs, errors.New("Dry-Run Mode"))
 		return httpResp
 	}
@@ -136,23 +134,23 @@ func getHTTP(args getHTTPArgs) *httpResponse {
 	return httpResp
 }
 
-func worker(jobs <-chan getHTTPArgs, results chan<- httpResponse) {
+func worker(jobs <-chan httpRequestArgs, results chan<- httpResponse) {
 	for j := range jobs {
 		var errs []error
-		httpResp := getHTTP(j)
+		httpResp := getHTTPResponse(j)
 		errs = append(errs, httpResp.errs...)
 
 		results <- *httpResp
 	}
 }
 
-func processURLs(urls map[string][]lineDetails, args processURLsArgs) {
+func processURLs(urls map[string][]lineDetail, args processURLsArgs) {
 	urlsCount := len(urls)
 
 	Report.PrintHeaderf("Processing URLs %d", urlsCount)
 	Report.PrintSubHeaderf("Workers: %d", args.numberOfWorkers)
 
-	jobs := make(chan getHTTPArgs, urlsCount)
+	jobs := make(chan httpRequestArgs, urlsCount)
 	results := make(chan httpResponse, urlsCount)
 	defer close(results)
 
@@ -161,7 +159,7 @@ func processURLs(urls map[string][]lineDetails, args processURLsArgs) {
 	}
 
 	for key := range urls {
-		jobs <- getHTTPArgs{
+		jobs <- httpRequestArgs{
 			url:     key,
 			options: args,
 		}

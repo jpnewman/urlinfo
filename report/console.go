@@ -34,7 +34,7 @@ func (f *ConsoleFormatter) PrintMessage(msg string) {
 	defer f.mu.Unlock()
 }
 
-// TODO: Check color output and locks.
+// TODO: Review need for lock around color if output is a file, etc.
 // printMessage Print Console Formatted Message
 func (f *ConsoleFormatter) printFormattedMessage(msg string, overline string, underline string, width int, c *color.Color) {
 	f.mu.Lock()

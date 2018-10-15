@@ -19,18 +19,18 @@ func helperCreateProcessURLsArgs() processURLsArgs {
 	}
 }
 
-func helperCreateTestHTTPRequestArgs(url string) *getHTTPArgs {
-	return &getHTTPArgs{
+func helperCreateTestHTTPRequestArgs(url string) *httpRequestArgs {
+	return &httpRequestArgs{
 		url:     url,
 		options: helperCreateProcessURLsArgs(),
 	}
 }
 
-func helperCreateLineDetails() map[string][]lineDetails {
-	urls := make(map[string][]lineDetails)
+func helperCreateLineDetails() map[string][]lineDetail {
+	urls := make(map[string][]lineDetail)
 
 	for i, u := range testDefaultURLs {
-		urls[u] = append(urls[u], lineDetails{
+		urls[u] = append(urls[u], lineDetail{
 			lineNumber: i,
 			line:       u,
 			comment:    "",
