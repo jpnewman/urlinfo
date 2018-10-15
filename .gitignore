@@ -11,6 +11,19 @@ urlinfo.md
 # Dep
 vendor/
 
+# Performance Profiles
+
+*.pprof
+
+# Benchmarking
+
+*.svg
+*.pdf
+
+# Disassemblies
+
+*.asm
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

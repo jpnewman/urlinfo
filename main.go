@@ -21,7 +21,7 @@ func main() {
 	args := parseArgs()
 	profiling.StartCPUProfiling(args.cpuProfile)
 
-	Report.SetFormatter(args.reportFormat)
+	Report.SetFormatter(*args.reportFormat)
 	Report.SetOutputFile(args.reportFile)
 
 	Report.PrintHeader("URLInfo")
@@ -30,11 +30,11 @@ func main() {
 	printFileDetails(urls, errs)
 
 	processURLs(urls, processURLsArgs{
-		httpTimeoutSeconds:  *args.httpTimeoutSeconds,
-		numberOfWorkers:     *args.numberOfWorkers,
-		getHeadOny:          *args.getHeadOny,
-		dontFollowRedirects: *args.dontFollowRedirects,
-		dryRun:              *args.dryRun,
+		httpTimeoutMilliseconds: *args.httpTimeoutMilliseconds,
+		numberOfWorkers:         *args.numberOfWorkers,
+		getHeadOny:              *args.getHeadOny,
+		dontFollowRedirects:     *args.dontFollowRedirects,
+		dryRun:                  *args.dryRun,
 	})
 
 	defer profiling.StopCPUProfiling(args.cpuProfile)

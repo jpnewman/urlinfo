@@ -8,22 +8,22 @@ import (
 )
 
 type args struct {
-	urlFile             *string
-	httpTimeoutSeconds  *int
-	numberOfWorkers     *int
-	getHeadOny          *bool
-	dontFollowRedirects *bool
-	reportFormat        *string
-	reportFile          *string
-	cpuProfile          *string
-	memProfile          *string
-	dryRun              *bool
+	urlFile                 *string
+	httpTimeoutMilliseconds *int
+	numberOfWorkers         *int
+	getHeadOny              *bool
+	dontFollowRedirects     *bool
+	reportFormat            *string
+	reportFile              *string
+	cpuProfile              *string
+	memProfile              *string
+	dryRun                  *bool
 }
 
 func parseArgs() args {
 	r := args{}
 	r.urlFile = flag.String("urlFile", "", "[Required] Path to file containing a list of URLs.")
-	r.httpTimeoutSeconds = flag.Int("httpTimeoutSeconds", 30, "Http Timeout")
+	r.httpTimeoutMilliseconds = flag.Int("httpTimeoutMilliseconds", 3000, "Http Timeout")
 	r.numberOfWorkers = flag.Int("numberOfWorkers", 5, "Number of workers")
 	r.getHeadOny = flag.Bool("getHeadOny", false, "Get HTTP Headers only")
 	r.dontFollowRedirects = flag.Bool("dontFollowRedirects", false, "Don't Follow HTTP Redirects")

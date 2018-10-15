@@ -15,11 +15,11 @@ import (
 )
 
 type processURLsArgs struct {
-	httpTimeoutSeconds  int
-	numberOfWorkers     int
-	getHeadOny          bool
-	dontFollowRedirects bool
-	dryRun              bool
+	httpTimeoutMilliseconds int
+	numberOfWorkers         int
+	getHeadOny              bool
+	dontFollowRedirects     bool
+	dryRun                  bool
 }
 
 type getHTTPArgs struct {
@@ -101,7 +101,7 @@ func getHTTPResponseBody(resp *http.Response) (string, error) {
 }
 
 func getHTTP(args getHTTPArgs) *httpResponse {
-	timeout := time.Duration(time.Duration(args.options.httpTimeoutSeconds) * time.Second)
+	timeout := time.Duration(time.Duration(args.options.httpTimeoutMilliseconds) * time.Millisecond)
 
 	httpResp := new(httpResponse)
 	client := createHTTPClient(args, timeout)
