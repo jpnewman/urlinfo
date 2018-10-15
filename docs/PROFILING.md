@@ -1,6 +1,14 @@
 
 # Profiling
 
+## Timing
+
+> Mac OS X
+
+~~~
+time ./urlinfo -urlFile=./_TestData/urls.txt
+~~~
+
 ## Create Profiles
 
 ~~~

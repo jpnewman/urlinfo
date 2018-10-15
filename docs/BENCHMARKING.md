@@ -12,6 +12,7 @@ go test ./... -bench=.
 ~~~
 go get golang.org/x/tools/cmd/benchcmp
 go get github.com/ajstarks/svgo/benchviz
+go get github.com/cespare/prettybench
 ~~~
 
 ### Generate OLD Benchmark
@@ -33,6 +34,12 @@ go test ./... -bench=. -run="^$" 2>&1 | tee benchmarks_NEW.log
 ~~~
 
 > Don't run any tests ```-run="^$"```.
+
+### Generate Benchmark, formatted
+
+~~~
+go build; go test ./... -bench=. -run="^$" 2>&1 | prettybench
+~~~
 
 ### Compare Benchmark Differences
 
