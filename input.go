@@ -57,14 +57,14 @@ func parseURLFileLine(line string, lineNum int, urls map[string][]lineDetail) []
 	return errs
 }
 
-func readURLFile(path *string) (map[string][]lineDetail, []lineError) {
-	Report.PrintSubHeaderf("Parsing URL file: %s", *path)
+func readURLFile(path string) (map[string][]lineDetail, []lineError) {
+	Report.PrintSubHeaderf("Parsing URL file: %s", path)
 
 	var lineRegEx = regexp.MustCompile(`(^\s*#.*$|^\s*$)`)
 	urls := make(map[string][]lineDetail)
 	var errs []lineError
 
-	file, err := os.Open(*path)
+	file, err := os.Open(path)
 	if err != nil {
 		Logger.Fatal(err)
 	}

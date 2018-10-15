@@ -40,7 +40,7 @@ func main() {
 
 	Report.PrintHeader("URLInfo")
 
-	urls, errs := readURLFile(args.urlFile)
+	urls, errs := readURLFile(*args.urlFile)
 	printFileDetails(urls, errs)
 
 	pArgs := processURLsArgs{
