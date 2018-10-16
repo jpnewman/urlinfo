@@ -20,7 +20,9 @@ type lineDetail struct {
 	err        error
 }
 
-func parseURLFileLine(line string, lineNum int, urls map[string][]lineDetail) []lineError {
+type mapURLs map[string][]lineDetail
+
+func parseURLFileLine(line string, lineNum int, urls mapURLs) []lineError {
 	var errs []lineError
 
 	line = strings.TrimSpace(line)
@@ -57,11 +59,11 @@ func parseURLFileLine(line string, lineNum int, urls map[string][]lineDetail) []
 	return errs
 }
 
-func readURLFile(path string) (map[string][]lineDetail, []lineError) {
+func readURLFile(path string) (mapURLs, []lineError) {
 	Report.PrintSubHeaderf("Parsing URL file: %s", path)
 
 	var lineRegEx = regexp.MustCompile(`(^\s*#.*$|^\s*$)`)
-	urls := make(map[string][]lineDetail)
+	urls := make(mapURLs)
 	var errs []lineError
 
 	file, err := os.Open(path)
@@ -88,7 +90,7 @@ func readURLFile(path string) (map[string][]lineDetail, []lineError) {
 	return urls, errs
 }
 
-func printURLList(urls map[string][]lineDetail) {
+func printURLList(urls mapURLs) {
 	var printableList []string
 
 	for key := range urls {
@@ -98,13 +100,13 @@ func printURLList(urls map[string][]lineDetail) {
 	Report.PrintList(printableList)
 }
 
-func printURLs(urls map[string][]lineDetail) {
+func printURLs(urls mapURLs) {
 	Report.PrintMessagef("Found URLs (%d): -\n", len(urls))
 	printURLList(urls)
 }
 
-func printURLDuplicates(urls map[string][]lineDetail) {
-	dups := make(map[string][]lineDetail)
+func printURLDuplicates(urls mapURLs) {
+	dups := make(mapURLs)
 
 	for key, val := range urls {
 		if len(val) > 1 {
@@ -131,7 +133,7 @@ func printURLErrors(errs []lineError) {
 	}
 }
 
-func printFileDetails(urls map[string][]lineDetail, errs []lineError) {
+func printFileDetails(urls mapURLs, errs []lineError) {
 	printURLs(urls)
 	printURLDuplicates(urls)
 	printURLErrors(errs)

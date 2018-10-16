@@ -134,7 +134,7 @@ func worker(jobs <-chan string, results chan<- *httpResponse, args *processURLsA
 	}
 }
 
-func processURLs(urls map[string][]lineDetail, args *processURLsArgs, client *http.Client) {
+func processURLs(urls mapURLs, args *processURLsArgs, client *http.Client) {
 	urlsCount := len(urls)
 
 	Report.PrintHeaderf("Processing URLs %d", urlsCount)

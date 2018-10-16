@@ -26,8 +26,8 @@ func helperCreateProcessURLsArgs(httpTimeout int) *processURLsArgs {
 	}
 }
 
-func helperCreateLineDetails() map[string][]lineDetail {
-	urls := make(map[string][]lineDetail)
+func helperCreateLineDetails() mapURLs {
+	urls := make(mapURLs)
 
 	for i, u := range testDefaultURLs {
 		urls[u] = append(urls[u], lineDetail{
